@@ -1,9 +1,9 @@
+use game_object::{ConsolePrinter, GameObject, TxtFileSaver};
 use items::Bow;
-use persistence::{DummyPersister, Persistable, TxtFileSaver};
 use player::Player;
 
+pub mod game_object;
 pub mod items;
-pub mod persistence;
 pub mod player;
 
 fn main() -> std::io::Result<()> {
@@ -17,14 +17,14 @@ fn main() -> std::io::Result<()> {
         range: 18.3,
     };
 
-    let persistables: Vec<&dyn Persistable> = vec![&player, &bow];
+    let game_objects: Vec<&dyn GameObject> = vec![&player, &bow];
 
     let txt_file_saver = TxtFileSaver::new("../save_files".into())?;
-    let dummy_persister = DummyPersister {};
+    let console_printer = ConsolePrinter {};
 
-    for persistable in persistables {
-        persistable.save_with(&txt_file_saver)?;
-        persistable.save_with(&dummy_persister)?;
+    for game_object in game_objects {
+        game_object.accept(&txt_file_saver)?;
+        game_object.accept(&console_printer)?;
     }
 
     Ok(())

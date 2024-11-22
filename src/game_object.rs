@@ -5,14 +5,15 @@ use std::{
 
 use crate::{items::Bow, player::Player};
 
-pub trait Persister {
-    fn save_player(&self, player: &Player) -> std::io::Result<()>;
-    fn save_bow(&self, bow: &Bow) -> std::io::Result<()>;
+pub trait GameObjectVisitor {
+    // TODO: you should do some error mapping on the return types -> Watch my custom errors video!
+    fn visit_player(&self, player: &Player) -> std::io::Result<()>;
+    fn visit_bow(&self, bow: &Bow) -> std::io::Result<()>;
 }
 
-pub trait Persistable {
+pub trait GameObject {
     // accept visitor
-    fn save_with(&self, saver: &dyn Persister) -> std::io::Result<()>;
+    fn accept(&self, visitor: &dyn GameObjectVisitor) -> std::io::Result<()>;
 }
 
 // visitor
@@ -44,8 +45,8 @@ impl TxtFileSaver {
     }
 }
 
-impl Persister for TxtFileSaver {
-    fn save_player(&self, player: &Player) -> std::io::Result<()> {
+impl GameObjectVisitor for TxtFileSaver {
+    fn visit_player(&self, player: &Player) -> std::io::Result<()> {
         let mut content = format!("Position: [{}, {}]\n", player.position.0, player.position.1);
         content.push_str(&format!("Health: {}", player.health));
 
@@ -53,7 +54,7 @@ impl Persister for TxtFileSaver {
         Ok(())
     }
 
-    fn save_bow(&self, bow: &Bow) -> std::io::Result<()> {
+    fn visit_bow(&self, bow: &Bow) -> std::io::Result<()> {
         let mut content = format!("Damage: {}\n", bow.damage);
         content.push_str(&format!("Range: {}", bow.range));
 
@@ -62,16 +63,16 @@ impl Persister for TxtFileSaver {
     }
 }
 
-pub struct DummyPersister {}
+pub struct ConsolePrinter {}
 
-impl Persister for DummyPersister {
-    fn save_player(&self, _player: &Player) -> std::io::Result<()> {
-        println!("persisting player...");
+impl GameObjectVisitor for ConsolePrinter {
+    fn visit_player(&self, _player: &Player) -> std::io::Result<()> {
+        println!("This is the player...");
         Ok(())
     }
 
-    fn save_bow(&self, _bow: &Bow) -> std::io::Result<()> {
-        println!("persisting bow...");
+    fn visit_bow(&self, _bow: &Bow) -> std::io::Result<()> {
+        println!("That's a bow!");
         Ok(())
     }
 }

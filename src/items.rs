@@ -1,13 +1,13 @@
-use crate::persistence::{Persistable, Persister};
+use crate::game_object::{GameObject, GameObjectVisitor};
 
 pub struct Bow {
     pub damage: i32,
     pub range: f32,
 }
 
-impl Persistable for Bow {
-    fn save_with(&self, saver: &dyn Persister) -> std::io::Result<()> {
-        saver.save_bow(&self)?;
+impl GameObject for Bow {
+    fn accept(&self, saver: &dyn GameObjectVisitor) -> std::io::Result<()> {
+        saver.visit_bow(&self)?;
         Ok(())
     }
 }
