@@ -1,4 +1,4 @@
-use std::{fs::OpenOptions, io::Write};
+use crate::persistence::TxtFileSaver;
 
 pub struct Bow {
     pub damage: i32,
@@ -6,15 +6,9 @@ pub struct Bow {
 }
 
 impl Bow {
-    pub fn save_to_file(&self, filename: &str) -> std::io::Result<()> {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(filename)?;
-
-        file.write_all(format!("Damage: {}\n", self.damage).as_bytes())?;
-        file.write_all(format!("Range: {}", self.range).as_bytes())?;
+    // accept visitor
+    pub fn save_with(&self, saver: &TxtFileSaver) -> std::io::Result<()> {
+        saver.save_bow(&self)?;
         Ok(())
     }
 }

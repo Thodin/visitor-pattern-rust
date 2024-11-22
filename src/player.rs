@@ -1,4 +1,4 @@
-use std::{fs::OpenOptions, io::Write};
+use crate::persistence::TxtFileSaver;
 
 pub struct Player {
     pub position: (f32, f32),
@@ -6,17 +6,9 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn save_to_file(&self, filename: &str) -> std::io::Result<()> {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(filename)?;
-
-        file.write_all(
-            format!("Position: [{}, {}]\n", self.position.0, self.position.1).as_bytes(),
-        )?;
-        file.write_all(format!("Health: {}", self.health).as_bytes())?;
+    // accept visitor
+    pub fn save_with(&self, saver: &TxtFileSaver) -> std::io::Result<()> {
+        saver.save_player(&self)?;
         Ok(())
     }
 }

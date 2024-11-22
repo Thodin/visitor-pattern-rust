@@ -1,9 +1,9 @@
-use std::fs;
-
 use items::Bow;
+use persistence::TxtFileSaver;
 use player::Player;
 
 pub mod items;
+pub mod persistence;
 pub mod player;
 
 fn main() -> std::io::Result<()> {
@@ -17,11 +17,10 @@ fn main() -> std::io::Result<()> {
         range: 18.3,
     };
 
-    let output_dir = "../save_files";
-    fs::create_dir_all(output_dir)?;
+    let txt_file_saver = TxtFileSaver::new("../save_files".into())?;
 
-    player.save_to_file(&format!("{}/player.txt", output_dir))?;
-    bow.save_to_file(&format!("{}/bow.txt", output_dir))?;
+    player.save_with(&txt_file_saver)?;
+    bow.save_with(&txt_file_saver)?;
 
     Ok(())
 }
