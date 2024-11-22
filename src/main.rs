@@ -1,3 +1,5 @@
+use std::fs;
+
 use items::Bow;
 use player::Player;
 
@@ -15,8 +17,11 @@ fn main() -> std::io::Result<()> {
         range: 18.3,
     };
 
-    player.save_to_file("player.txt")?;
-    bow.save_to_file("bow.txt")?;
+    let output_dir = "../save_files";
+    fs::create_dir_all(output_dir)?;
+
+    player.save_to_file(&format!("{}/player.txt", output_dir))?;
+    bow.save_to_file(&format!("{}/bow.txt", output_dir))?;
 
     Ok(())
 }
