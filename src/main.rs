@@ -1,10 +1,14 @@
-use game_object::{ConsolePrinter, GameObject, TxtFileSaver};
+use console_printer::ConsolePrinter;
+use game_object::GameObject;
 use items::Bow;
 use player::Player;
+use txt_file_saver::TxtFileSaver;
 
+pub mod console_printer;
 pub mod game_object;
 pub mod items;
 pub mod player;
+pub mod txt_file_saver;
 
 fn main() -> std::io::Result<()> {
     let player = Player {
