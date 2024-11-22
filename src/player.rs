@@ -6,8 +6,8 @@ pub struct Player {
 }
 
 impl GameObject for Player {
-    fn accept(&self, saver: &dyn GameObjectVisitor) -> std::io::Result<()> {
-        saver.visit_player(&self)?;
+    fn accept(&self, visitor: &dyn GameObjectVisitor) -> std::io::Result<()> {
+        visitor.visit_player(&self)?;
         Ok(())
     }
 }
