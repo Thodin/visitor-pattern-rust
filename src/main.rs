@@ -4,9 +4,8 @@ use player::Player;
 pub mod items;
 pub mod player;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let player = Player {
-        gold: 0,
         position: (50.0, 50.0),
         health: 100,
     };
@@ -15,4 +14,9 @@ fn main() {
         damage: 12,
         range: 18.3,
     };
+
+    player.save_to_file("player.txt")?;
+    bow.save_to_file("bow.txt")?;
+
+    Ok(())
 }
