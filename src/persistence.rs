@@ -1,5 +1,5 @@
 use std::{
-    fs::{self, OpenOptions},
+    fs::{self, File, OpenOptions},
     io::Write,
 };
 
@@ -17,31 +17,35 @@ impl TxtFileSaver {
         Ok(txt_file_saver)
     }
 
-    pub fn save_player(&self, player: &Player) -> std::io::Result<()> {
-        let filename = format!("{}/player.txt", self.save_dir);
-        let mut file = OpenOptions::new()
+    fn open_file(&self, struct_name: &str) -> std::io::Result<File> {
+        let filename = format!("{}/{}.txt", self.save_dir, struct_name);
+        let file = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
             .open(filename)?;
+        Ok(file)
+    }
 
-        file.write_all(
-            format!("Position: [{}, {}]\n", player.position.0, player.position.1).as_bytes(),
-        )?;
-        file.write_all(format!("Health: {}", player.health).as_bytes())?;
+    fn write_to_file(&self, struct_name: &str, content: String) -> std::io::Result<()> {
+        let mut file = self.open_file(struct_name)?;
+        file.write_all(content.as_bytes())?;
+        Ok(())
+    }
+
+    pub fn save_player(&self, player: &Player) -> std::io::Result<()> {
+        let mut content = format!("Position: [{}, {}]\n", player.position.0, player.position.1);
+        content.push_str(&format!("Health: {}", player.health));
+
+        self.write_to_file("player", content)?;
         Ok(())
     }
 
     pub fn save_bow(&self, bow: &Bow) -> std::io::Result<()> {
-        let filename = format!("{}/bow.txt", self.save_dir);
-        let mut file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(filename)?;
+        let mut content = format!("Damage: {}\n", bow.damage);
+        content.push_str(&format!("Range: {}", bow.range));
 
-        file.write_all(format!("Damage: {}\n", bow.damage).as_bytes())?;
-        file.write_all(format!("Range: {}", bow.range).as_bytes())?;
+        self.write_to_file("bow", content)?;
         Ok(())
     }
 }
