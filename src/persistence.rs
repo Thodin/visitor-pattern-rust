@@ -10,6 +10,11 @@ pub trait Persister {
     fn save_bow(&self, bow: &Bow) -> std::io::Result<()>;
 }
 
+pub trait Persistable {
+    // accept visitor
+    fn save_with(&self, saver: &dyn Persister) -> std::io::Result<()>;
+}
+
 // visitor
 pub struct TxtFileSaver {
     save_dir: String,

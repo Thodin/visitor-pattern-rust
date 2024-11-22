@@ -1,5 +1,5 @@
 use items::Bow;
-use persistence::{DummyPersister, TxtFileSaver};
+use persistence::{DummyPersister, Persistable, TxtFileSaver};
 use player::Player;
 
 pub mod items;
@@ -17,15 +17,15 @@ fn main() -> std::io::Result<()> {
         range: 18.3,
     };
 
+    let persistables: Vec<&dyn Persistable> = vec![&player, &bow];
+
     let txt_file_saver = TxtFileSaver::new("../save_files".into())?;
-
-    player.save_with(&txt_file_saver)?;
-    bow.save_with(&txt_file_saver)?;
-
     let dummy_persister = DummyPersister {};
 
-    player.save_with(&dummy_persister)?;
-    bow.save_with(&dummy_persister)?;
+    for persistable in persistables {
+        persistable.save_with(&txt_file_saver)?;
+        persistable.save_with(&dummy_persister)?;
+    }
 
     Ok(())
 }
