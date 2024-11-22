@@ -1,5 +1,5 @@
 use items::Bow;
-use persistence::TxtFileSaver;
+use persistence::{DummyPersister, TxtFileSaver};
 use player::Player;
 
 pub mod items;
@@ -21,6 +21,11 @@ fn main() -> std::io::Result<()> {
 
     player.save_with(&txt_file_saver)?;
     bow.save_with(&txt_file_saver)?;
+
+    let dummy_persister = DummyPersister {};
+
+    player.save_with(&dummy_persister)?;
+    bow.save_with(&dummy_persister)?;
 
     Ok(())
 }

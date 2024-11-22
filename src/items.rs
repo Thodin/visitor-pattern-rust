@@ -1,4 +1,4 @@
-use crate::persistence::TxtFileSaver;
+use crate::persistence::Persister;
 
 pub struct Bow {
     pub damage: i32,
@@ -7,7 +7,7 @@ pub struct Bow {
 
 impl Bow {
     // accept visitor
-    pub fn save_with(&self, saver: &TxtFileSaver) -> std::io::Result<()> {
+    pub fn save_with(&self, saver: &dyn Persister) -> std::io::Result<()> {
         saver.save_bow(&self)?;
         Ok(())
     }

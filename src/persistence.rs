@@ -5,6 +5,11 @@ use std::{
 
 use crate::{items::Bow, player::Player};
 
+pub trait Persister {
+    fn save_player(&self, player: &Player) -> std::io::Result<()>;
+    fn save_bow(&self, bow: &Bow) -> std::io::Result<()>;
+}
+
 // visitor
 pub struct TxtFileSaver {
     save_dir: String,
@@ -32,8 +37,10 @@ impl TxtFileSaver {
         file.write_all(content.as_bytes())?;
         Ok(())
     }
+}
 
-    pub fn save_player(&self, player: &Player) -> std::io::Result<()> {
+impl Persister for TxtFileSaver {
+    fn save_player(&self, player: &Player) -> std::io::Result<()> {
         let mut content = format!("Position: [{}, {}]\n", player.position.0, player.position.1);
         content.push_str(&format!("Health: {}", player.health));
 
@@ -41,11 +48,25 @@ impl TxtFileSaver {
         Ok(())
     }
 
-    pub fn save_bow(&self, bow: &Bow) -> std::io::Result<()> {
+    fn save_bow(&self, bow: &Bow) -> std::io::Result<()> {
         let mut content = format!("Damage: {}\n", bow.damage);
         content.push_str(&format!("Range: {}", bow.range));
 
         self.write_to_file("bow", content)?;
+        Ok(())
+    }
+}
+
+pub struct DummyPersister {}
+
+impl Persister for DummyPersister {
+    fn save_player(&self, _player: &Player) -> std::io::Result<()> {
+        println!("persisting player...");
+        Ok(())
+    }
+
+    fn save_bow(&self, _bow: &Bow) -> std::io::Result<()> {
+        println!("persisting bow...");
         Ok(())
     }
 }
